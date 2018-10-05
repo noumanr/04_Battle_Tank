@@ -36,22 +36,18 @@ void ATankController_CPP::Tick(float DeltaTime)
 // Aim the turret toward the Cross hair
 void ATankController_CPP::AimTowardCrosshair()
 {
-
+	   
 	FVector HitResult;
+
 	if (GetSightRayHitLocation(HitResult))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("This is ticking %s"), *(HitResult.ToString()))
+		//UE_LOG(LogTemp, Warning, TEXT("This is ticking %s"), *(HitResult.ToString()))
 		//TODO Tell the Tank to aim at the point
 	}
 	else
 	{
 		return;
 	}
-		
-	
-		// cast a ray to the world
-	// get the hit location vector out
-	//log the value
 
 	return;
 }
@@ -60,28 +56,20 @@ void ATankController_CPP::AimTowardCrosshair()
 
 bool ATankController_CPP::GetSightRayHitLocation(FVector& OutHitLocation) const
 {
-	FHitResult OutHitRayLocation;
-	FCollisionQueryParams TraceParameters (FName(TEXT("")), false, GetOwner());
-
-	FVector PlayerPreviewVector;
-	FRotator PlayerPreviewRotation;
-	FVector OffsetVector = FVector(0., 0., 4500.3f);
-	GetPlayerViewPoint(PlayerPreviewVector, PlayerPreviewRotation);
-
-	FVector LineOutVectorLocation = (PlayerPreviewVector + (PlayerPreviewRotation.Vector()*Reach)) + OffsetVector;
 
 	
+	FVector _playerWorldDirection;
+		
+	if (GetLookDirection(_playerWorldDirection))
+	{
+		if (GetHitVectorLocation(_playerWorldDirection, OutHitLocation)) // IN Vector for world direction and OUT vector of Impact Point
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Tank Controller Attached to %s "), *(OutHitLocation.ToString()))
+		}
+	}
 
 
-	GetWorld()->LineTraceSingleByObjectType(OUT OutHitRayLocation,
-		PlayerPreviewVector,
-		LineOutVectorLocation,
-		FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic),
-		TraceParameters
-	);
-	
-	OutHitLocation = OutHitRayLocation.ImpactPoint;
-	return OutHitRayLocation.bBlockingHit;
+	return GetHitVectorLocation(_playerWorldDirection, OutHitLocation);
 }
 
 
@@ -94,4 +82,51 @@ ATank * ATankController_CPP::GetControlledTank() const
 
 	return Cast <ATank>(GetPawn());
 
+}
+
+// GetPlayer World Direction or Forward Vector
+bool ATankController_CPP::GetLookDirection(FVector& PlayerWorldDirection) const
+{
+	int32 ViewportX, ViewportY;
+	GetViewportSize(ViewportX, ViewportY);
+	FVector PlayerWorldLocation; // to be discarded 
+
+	FVector2D ScreenLocation = FVector2D((ViewportX*CrossHairXLocation), (ViewportY*CrossHairYLocation));
+
+	if (DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, PlayerWorldLocation, PlayerWorldDirection))
+	{
+		return true;
+	}
+	
+
+	return false;
+}
+
+bool ATankController_CPP::GetHitVectorLocation(FVector PlayerWorldDirection, FVector& OutHitRayVectorLocation) const {
+	FHitResult OutHitRayLocation;
+	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+
+	FVector PlayerPreviewVector;
+	FRotator PlayerPreviewRotation;
+
+	PlayerPreviewVector = PlayerCameraManager->GetCameraLocation();
+	
+	FVector LineOutVectorLocation = (PlayerPreviewVector + (PlayerWorldDirection*LineTraceRange)) ;
+	
+	///defining the query prams needed for the line trace channel
+	FCollisionQueryParams CollisionParams;
+	FCollisionResponseParams ResponsePrams;
+
+	GetWorld()->LineTraceSingleByChannel(OutHitRayLocation,
+		PlayerPreviewVector,
+		LineOutVectorLocation,
+		ECollisionChannel(ECC_Visibility),
+		CollisionParams,
+		ResponsePrams
+		);
+	///testing the line with debug line
+	//DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
+	 OutHitRayVectorLocation = OutHitRayLocation.Location;
+
+	return OutHitRayLocation.bBlockingHit;
 }

@@ -17,7 +17,7 @@ class BATTLE_TANK_API ATankController_CPP : public APlayerController
 {
 	GENERATED_BODY()
 
-
+private:
 	virtual void Tick(float DeltaTime) override;
 	ATank* GetControlledTank() const;
 	
@@ -28,9 +28,16 @@ class BATTLE_TANK_API ATankController_CPP : public APlayerController
 	// Tells the Tank Turret controller to hit at the cross hair
 	// in the world.
 	void AimTowardCrosshair();
+	bool GetHitVectorLocation(FVector PlayerWorldDirection, FVector& OutHitRayVectorLocationn) const;
+
+	bool GetLookDirection(FVector& PlayerWorldDirection) const;
 	bool GetSightRayHitLocation(FVector& OutHitLocation) const;
 
-	UPROPERTY(VisibleAnywhere)
-		float Reach = 200000.f;
+	UPROPERTY(EditAnywhere)
+	float LineTraceRange = 200000.f;
+	UPROPERTY(EditAnywhere)
+	float CrossHairXLocation = .5f;
+	UPROPERTY(EditAnywhere)
+	float CrossHairYLocation = .33333f;
 
 };
