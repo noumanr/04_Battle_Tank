@@ -7,11 +7,12 @@ void ATankAIController::BeginPlay()
 	Super::BeginPlay();
 
 	ATank* AITank = GetAIControlledTank();
-		
+	ATank* PlayerTank = GetPlayerControlledTank();
+
 	if (AITank)
 	{
-
 		UE_LOG(LogTemp, Warning, TEXT("Tank AI Controller Attached to %s "), *(AITank->GetName()))
+		
 	}
 	else
 	{
@@ -19,10 +20,10 @@ void ATankAIController::BeginPlay()
 
 	}
 
-	ATank* PlayerTank = GetPlayerControlledTank();
+
 	if (PlayerTank)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Player Tank Found %s "), *(PlayerTank->GetName()))
+		UE_LOG(LogTemp, Warning, TEXT("Player found to %s "), *(PlayerTank->GetName()))
 	}
 	else
 	{
@@ -31,6 +32,26 @@ void ATankAIController::BeginPlay()
 	}
 }
 	
+void ATankAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	ATank* PlayerTank = GetPlayerControlledTank();
+	
+	
+	
+	auto ThisTankName = GetAIControlledTank()->GetName();
+
+
+	if (PlayerTank)
+	{
+		FVector PlayerLocation = PlayerTank->GetActorLocation();
+		GetAIControlledTank()->AimAtTank(PlayerLocation);
+
+		//UE_LOG(LogTemp, Error, TEXT("%s is aiming at  %s "), *ThisTankName, *(PlayerLocation.ToString()))
+	}
+	
+}
+
 
 ATank * ATankAIController::GetAIControlledTank() const
 {

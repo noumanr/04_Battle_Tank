@@ -37,12 +37,12 @@ void ATankController_CPP::Tick(float DeltaTime)
 void ATankController_CPP::AimTowardCrosshair()
 {
 	   
-	FVector HitResult;
-
-	if (GetSightRayHitLocation(HitResult))
+	FVector OutHitLocation;
+	if (!GetControlledTank()) { return; }
+	if (GetSightRayHitLocation(OutHitLocation))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("This is ticking %s"), *(HitResult.ToString()))
-		//TODO Tell the Tank to aim at the point
+		//UE_LOG(LogTemp, Warning, TEXT("%s is aiming at %s "), *(HitResult.ToString()))
+		GetControlledTank()->AimAtTank(OutHitLocation);
 	}
 	else
 	{
@@ -56,20 +56,22 @@ void ATankController_CPP::AimTowardCrosshair()
 
 bool ATankController_CPP::GetSightRayHitLocation(FVector& OutHitLocation) const
 {
-
+	int32 ViewportX, ViewportY;
+	GetViewportSize(ViewportX, ViewportY);
 	
-	FVector _playerWorldDirection;
+
+	FVector2D ScreenLocation = FVector2D((ViewportX*CrossHairXLocation), (ViewportY*CrossHairYLocation));
+	
+	FVector PlayerWorldDirection;
 		
-	if (GetLookDirection(_playerWorldDirection))
+	if (GetLookDirection(ScreenLocation, PlayerWorldDirection))
 	{
-		if (GetHitVectorLocation(_playerWorldDirection, OutHitLocation)) // IN Vector for world direction and OUT vector of Impact Point
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No Tank Controller Attached to %s "), *(OutHitLocation.ToString()))
-		}
+		GetHitVectorLocation(PlayerWorldDirection, OutHitLocation); // IN Vector for world direction and OUT vector of Impact Point
+		
 	}
 
 
-	return GetHitVectorLocation(_playerWorldDirection, OutHitLocation);
+	return true;
 }
 
 
@@ -78,44 +80,35 @@ bool ATankController_CPP::GetSightRayHitLocation(FVector& OutHitLocation) const
 // Get the pawn attached to the controller
 ATank * ATankController_CPP::GetControlledTank() const
 {
-	//if (!GetControlledTank()) { return nullptr; }
+	//
 
 	return Cast <ATank>(GetPawn());
 
 }
 
 // GetPlayer World Direction or Forward Vector
-bool ATankController_CPP::GetLookDirection(FVector& PlayerWorldDirection) const
+bool ATankController_CPP::GetLookDirection(FVector2D ScreenLocation, FVector& PlayerWorldDirection) const
 {
-	int32 ViewportX, ViewportY;
-	GetViewportSize(ViewportX, ViewportY);
 	FVector PlayerWorldLocation; // to be discarded 
 
-	FVector2D ScreenLocation = FVector2D((ViewportX*CrossHairXLocation), (ViewportY*CrossHairYLocation));
-
-	if (DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, PlayerWorldLocation, PlayerWorldDirection))
-	{
-		return true;
-	}
+	return (DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, PlayerWorldLocation, PlayerWorldDirection));
 	
-
-	return false;
 }
 
-bool ATankController_CPP::GetHitVectorLocation(FVector PlayerWorldDirection, FVector& OutHitRayVectorLocation) const {
-	FHitResult OutHitRayLocation;
+bool ATankController_CPP::GetHitVectorLocation(FVector LookDirection, FVector& OutHitRayVectorLocation) const {
+	
+	FHitResult OutHitRayLocation;//out hit result 
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
 
-	FVector PlayerPreviewVector;
-	FRotator PlayerPreviewRotation;
+	FVector PlayerPreviewVector = PlayerCameraManager->GetCameraLocation();
 
-	PlayerPreviewVector = PlayerCameraManager->GetCameraLocation();
-	
-	FVector LineOutVectorLocation = (PlayerPreviewVector + (PlayerWorldDirection*LineTraceRange)) ;
+
+	FVector LineOutVectorLocation = (PlayerPreviewVector + (LookDirection*LineTraceRange)) ;
 	
 	///defining the query prams needed for the line trace channel
 	FCollisionQueryParams CollisionParams;
 	FCollisionResponseParams ResponsePrams;
+
 
 	GetWorld()->LineTraceSingleByChannel(OutHitRayLocation,
 		PlayerPreviewVector,
@@ -125,7 +118,7 @@ bool ATankController_CPP::GetHitVectorLocation(FVector PlayerWorldDirection, FVe
 		ResponsePrams
 		);
 	///testing the line with debug line
-	//DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
+	///DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
 	 OutHitRayVectorLocation = OutHitRayLocation.Location;
 
 	return OutHitRayLocation.bBlockingHit;

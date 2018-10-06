@@ -28,9 +28,9 @@ private:
 	// Tells the Tank Turret controller to hit at the cross hair
 	// in the world.
 	void AimTowardCrosshair();
-	bool GetHitVectorLocation(FVector PlayerWorldDirection, FVector& OutHitRayVectorLocationn) const;
+	bool GetHitVectorLocation(FVector PlayerWorldDirection, FVector& OutHitRayVectorLocation) const;
 
-	bool GetLookDirection(FVector& PlayerWorldDirection) const;
+	bool GetLookDirection(FVector2D ScreenLocation, FVector& PlayerWorldDirection) const;
 	bool GetSightRayHitLocation(FVector& OutHitLocation) const;
 
 	UPROPERTY(EditAnywhere)
