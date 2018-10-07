@@ -4,10 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "TankAimingComponent.h"
+
 #include "Tank.generated.h"
 
+//forward declaration
 class UTankBarrel;
+class UTankAimingComponent;
+class UTankTurret;
+
+
 
 UCLASS()
 class BATTLE_TANK_API ATank : public APawn
@@ -20,10 +25,12 @@ public:
 	void AimAtTank(FVector HitLocation);
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
+
+
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTurretRefernce(UTankTurret* TurretToSet);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -37,4 +44,5 @@ private:
 	UPROPERTY(EditAnywhere, Category = Fire)
 	float LaunchSpeed = 10000; // TODO find sensible speed
 	
+
 };

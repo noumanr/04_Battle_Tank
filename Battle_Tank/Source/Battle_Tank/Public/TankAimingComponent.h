@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Engine/Classes/Kismet/GameplayStatics.h"
+
 #include "TankAimingComponent.generated.h"
 
 class UTankBarrel;
+class UGameplayStatics;
+class UTankTurret;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLE_TANK_API UTankAimingComponent : public UActorComponent
@@ -22,13 +24,17 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	UTankBarrel* Barrel = nullptr;
-	UGameplayStatics* GamePlayStatistics;
+	UTankTurret* Turret = nullptr;
+	UGameplayStatics* GamePlayStatics = nullptr;
+	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void AimAtTank(FVector WorldSpaceVector, float LaunchSpeed);
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
+	void SetTurretRefernce (UTankTurret* TurretToSet);
 		
 private:
 	void MoveBarrel(FVector AimDirection);
+	void MoveTurret(FVector AimDirection);
 };

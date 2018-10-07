@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankAimingComponent.h"
+#include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 
 
 
@@ -10,7 +12,7 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = true;  //TODO should this tick
 
 	// ...
 }
@@ -37,50 +39,72 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel) { return; }
+	if (!Turret) { return; }
 	FCollisionResponseParams CollisionResponse (ECollisionResponse::ECR_Block);
 
-	TArray <AActor*> temp;
+	TArray <AActor*> ActorArray_temp;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("FireSocket"));
 	FVector TossVelocity;
 
 	//Get the Toss Velocity , if successful it will return true
-	bool bHaveAimingSoution = GamePlayStatistics->SuggestProjectileVelocity(
-		GetOwner(), 
-		TossVelocity, 
-		StartLocation, 
+	bool bHaveAimingSoution = GamePlayStatics->SuggestProjectileVelocity(
+		GetOwner(),
+		TossVelocity,
+		StartLocation,
 		HitLocation, // RayCast hit Location
 		LaunchSpeed, //derived from the blueprint
 		false,
 		0.f,
 		0,
-		ESuggestProjVelocityTraceOption::TraceFullPath,
+		ESuggestProjVelocityTraceOption::OnlyTraceWhileAscending,
 		CollisionResponse,
-		temp, // might be risky a null Actor array
-		true // draw the debug line
+		ActorArray_temp,
+		false
 	);
 
 	if (bHaveAimingSoution)
 	{
 		FVector AimDirection = TossVelocity.GetSafeNormal(); //Return the Safe Normal, don't know why need to study
 		MoveBarrel(AimDirection);
+		MoveTurret(AimDirection);
+	//	auto Time = GetWorld()->GetTimeSeconds();
+	//	UE_LOG(LogTemp, Warning, TEXT("%f Aim Solution Found "), Time)
+	}
+	else
+	{
+		auto Time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Error, TEXT("%f No Aim Solution Found "), Time)
 	}
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
-{
+{	
 	Barrel = BarrelToSet;
 }
+
+void UTankAimingComponent::SetTurretRefernce(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
+}
+
 void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 {
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimRotator - BarrelRotator;
 
-		//Need to get value from screen space
-		// de porject those value in a 3d vector
-		// use those pitch value to rotate the turret
-		Barrel->Elevate(5); // TODO remove Magic Number
+	Barrel->Elevate(DeltaRotator.Pitch); 
+	
+}
+void UTankAimingComponent::MoveTurret(FVector AimDirection)
+{
+	auto TurretRotator = Turret->GetForwardVector().Rotation();
+	auto AimRotator = AimDirection.Rotation();
+	auto DeltaRotator = AimRotator - TurretRotator;
+
+	Turret->TurretRotation(DeltaRotator.Yaw);
 
 
-			
+
+
 }

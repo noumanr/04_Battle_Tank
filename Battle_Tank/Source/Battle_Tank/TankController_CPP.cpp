@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankController_CPP.h"
+#include "Tank.h"
 
 void ATankController_CPP::BeginPlay()
 {
@@ -26,9 +27,6 @@ void ATankController_CPP::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
-
-	//DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
 	AimTowardCrosshair();
 
 }
@@ -41,7 +39,6 @@ void ATankController_CPP::AimTowardCrosshair()
 	if (!GetControlledTank()) { return; }
 	if (GetSightRayHitLocation(OutHitLocation))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("%s is aiming at %s "), *(HitResult.ToString()))
 		GetControlledTank()->AimAtTank(OutHitLocation);
 	}
 	else
