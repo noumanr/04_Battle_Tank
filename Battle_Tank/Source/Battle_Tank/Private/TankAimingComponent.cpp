@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankAimingComponent.h"
+#include "TankBarrel.h"
+
 
 
 // Sets default values for this component's properties
@@ -64,7 +66,7 @@ void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
 	}
 }
 
-void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
+void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
 }
@@ -72,14 +74,13 @@ void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 {
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimRotator = AimDirection.Rotation();
-	auto DeltaRotator = AimDirection - BarrelRotator;
-	UE_LOG (LogTemp, Warning, TEXT ("The Barrel Rotator %s"), *DeltaRotator.ToString())
-	//Need to get value from screen space
-	// deporject those value in a 3d vector
-	// use those pitch value to rotate the turret
+	auto DeltaRotator = AimRotator - BarrelRotator;
+
+		//Need to get value from screen space
+		// de porject those value in a 3d vector
+		// use those pitch value to rotate the turret
+		Barrel->Elevate(5); // TODO remove Magic Number
 
 
-		// use the yaw values to rotate the barrel
-		// and Yaw/up-down rotation will be done on barrel
 			
 }
