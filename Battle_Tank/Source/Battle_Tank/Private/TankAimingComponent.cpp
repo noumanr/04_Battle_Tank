@@ -48,7 +48,7 @@ void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
 
 	//Get the Toss Velocity , if successful it will return true
 	bool bHaveAimingSoution = GamePlayStatics->SuggestProjectileVelocity(
-		GetOwner(),
+		this,
 		TossVelocity,
 		StartLocation,
 		HitLocation, // RayCast hit Location
@@ -56,10 +56,7 @@ void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
 		false,
 		0.f,
 		0,
-		ESuggestProjVelocityTraceOption::OnlyTraceWhileAscending,
-		CollisionResponse,
-		ActorArray_temp,
-		false
+		ESuggestProjVelocityTraceOption::DoNotTrace
 	);
 
 	if (bHaveAimingSoution)

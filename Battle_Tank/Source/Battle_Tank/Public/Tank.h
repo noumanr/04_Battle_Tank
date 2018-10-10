@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-
 #include "Tank.generated.h"
 
 //forward declaration
 class UTankBarrel;
 class UTankAimingComponent;
 class UTankTurret;
-
+class AProjectile;
 
 
 UCLASS()
@@ -24,7 +23,8 @@ public:
 	ATank();
 	void AimAtTank(FVector HitLocation);
 	UTankAimingComponent* TankAimingComponent = nullptr;
-
+	UTankBarrel* Barrel = nullptr;
+	UStaticMeshComponent* Body;
 
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
@@ -34,6 +34,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(BlueprintCallable, Category = Fire)
+	void Fire();
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -43,6 +46,11 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = Fire)
 	float LaunchSpeed = 10000; // TODO find sensible speed
-	
+	UPROPERTY(EditAnywhere, Category = Setup)
+	TSubclassOf<AProjectile> ProjectileBluePrint = nullptr;
+
+	float FireDelay = 3;
+	double LastFireTime = 0;
+
 
 };

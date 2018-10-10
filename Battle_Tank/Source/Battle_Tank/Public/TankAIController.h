@@ -20,6 +20,4 @@ public:
 	
 private:
 
-		ATank* GetPlayerControlledTank() const;
-		ATank* GetAIControlledTank() const;
 };
