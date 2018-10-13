@@ -29,7 +29,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void AimAtTank(FVector WorldSpaceVector, float LaunchSpeed);
+	void AimAtTank(FVector OutHitRayVectorLocation, float LaunchSpeed);
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 	void SetTurretRefernce (UTankTurret* TurretToSet);
 		

@@ -44,11 +44,11 @@ protected:
 
 
 private:
-	UPROPERTY(EditAnywhere, Category = Fire)
-	float LaunchSpeed = 10000; // TODO find sensible speed
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Fire)
+		float LaunchSpeed = 10000; // TODO find sensible speed
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBluePrint = nullptr;
-
+	UPROPERTY(EditDefaultsOnly, Category = Fire)
 	float FireDelay = 3;
 	double LastFireTime = 0;
 

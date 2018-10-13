@@ -13,8 +13,6 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;  //TODO should this tick
-
-	// ...
 }
 
 
@@ -36,13 +34,11 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
+void UTankAimingComponent::AimAtTank(FVector OutHitRayVectorLocation, float LaunchSpeed)
 {
 	if (!Barrel) { return; }
 	if (!Turret) { return; }
-	FCollisionResponseParams CollisionResponse (ECollisionResponse::ECR_Block);
 
-	TArray <AActor*> ActorArray_temp;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("FireSocket"));
 	FVector TossVelocity;
 
@@ -51,7 +47,7 @@ void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
 		this,
 		TossVelocity,
 		StartLocation,
-		HitLocation, // RayCast hit Location
+		OutHitRayVectorLocation, // RayCast hit Location
 		LaunchSpeed, //derived from the blueprint
 		false,
 		0.f,
@@ -64,13 +60,14 @@ void UTankAimingComponent::AimAtTank(FVector HitLocation, float LaunchSpeed)
 		FVector AimDirection = TossVelocity.GetSafeNormal(); //Return the Safe Normal, don't know why need to study
 		MoveBarrel(AimDirection);
 		MoveTurret(AimDirection);
-	//	auto Time = GetWorld()->GetTimeSeconds();
-	//	UE_LOG(LogTemp, Warning, TEXT("%f Aim Solution Found "), Time)
+	//auto Time = GetWorld()->GetTimeSeconds();
+	//UE_LOG(LogTemp, Warning, TEXT("%s Aim Solution Found "), *(OutHitRayVectorLocation.ToString()))
+		
 	}
 	else
 	{
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Error, TEXT("%f No Aim Solution Found "), Time)
+		//UE_LOG(LogTemp, Error, TEXT("%f No Aim Solution Found "), Time)
 	}
 }
 

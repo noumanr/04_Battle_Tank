@@ -110,12 +110,10 @@ bool ATankController_CPP::GetHitVectorLocation(FVector LookDirection, FVector& O
 	GetWorld()->LineTraceSingleByChannel(OutHitRayLocation,
 		PlayerPreviewVector,
 		LineOutVectorLocation,
-		ECollisionChannel(ECC_Visibility),
-		CollisionParams,
-		ResponsePrams
+		ECollisionChannel(ECC_Visibility)
 		);
 	///testing the line with debug line
-	///DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
+	//DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
 	 OutHitRayVectorLocation = OutHitRayLocation.Location;
 
 	return OutHitRayLocation.bBlockingHit;
