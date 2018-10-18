@@ -19,6 +19,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetThrottleRequest(float Throttle);
 	UPROPERTY(EditDefaultsOnly, Category = Fire)
-		float MaxTrackThrottle = 400000;
+		float MaxTrackThrottle = 20000000;
 
 };

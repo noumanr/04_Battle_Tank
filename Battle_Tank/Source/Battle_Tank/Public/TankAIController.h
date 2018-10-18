@@ -7,6 +7,7 @@
 #include "TankAIController.generated.h"
 
 class ATank;
+class UTankMovementComponent;
 
 UCLASS()
 class BATTLE_TANK_API ATankAIController : public AAIController
@@ -17,7 +18,8 @@ class BATTLE_TANK_API ATankAIController : public AAIController
 public:
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
-	
+		UTankMovementComponent* TankMovementComponent = nullptr;
 private:
-
+	
+	float AcceptanceRadius = 300;
 };

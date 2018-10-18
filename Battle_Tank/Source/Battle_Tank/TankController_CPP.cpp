@@ -97,24 +97,25 @@ bool ATankController_CPP::GetHitVectorLocation(FVector LookDirection, FVector& O
 	FHitResult OutHitRayLocation;//out hit result 
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
 
-	FVector PlayerPreviewVector = PlayerCameraManager->GetCameraLocation();
+	FVector StartLocation = PlayerCameraManager->GetCameraLocation();
 
 
-	FVector LineOutVectorLocation = (PlayerPreviewVector + (LookDirection*LineTraceRange)) ;
+	FVector EndLocation = (StartLocation + (LookDirection*LineTraceRange)) ;
 	
 	///defining the query prams needed for the line trace channel
 	FCollisionQueryParams CollisionParams;
 	FCollisionResponseParams ResponsePrams;
 
 
-	GetWorld()->LineTraceSingleByChannel(OutHitRayLocation,
-		PlayerPreviewVector,
-		LineOutVectorLocation,
-		ECollisionChannel(ECC_Visibility)
-		);
-	///testing the line with debug line
-	//DrawDebugLine(GetWorld(), PlayerPreviewVector, LineOutVectorLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
-	 OutHitRayVectorLocation = OutHitRayLocation.Location;
+	GetWorld()->LineTraceSingleByChannel(
+		OutHitRayLocation,
+		StartLocation,
+		EndLocation,
+		ECollisionChannel::ECC_Camera);
 
+	///testing the line with debug line
+	//DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor(255, 0, 0), false, 0.f, 0.f, 5.f);
+
+	OutHitRayVectorLocation = OutHitRayLocation.Location;
 	return OutHitRayLocation.bBlockingHit;
 }

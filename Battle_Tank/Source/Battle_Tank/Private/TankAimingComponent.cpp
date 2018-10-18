@@ -41,10 +41,11 @@ void UTankAimingComponent::AimAtTank(FVector OutHitRayVectorLocation, float Laun
 
 	FVector StartLocation = Barrel->GetSocketLocation(FName("FireSocket"));
 	FVector TossVelocity;
-
+	FCollisionResponseParams CollisionResponse = FCollisionResponseParams(ECR_Block);
+	TArray <AActor*> Temp;
 	//Get the Toss Velocity , if successful it will return true
 	bool bHaveAimingSoution = GamePlayStatics->SuggestProjectileVelocity(
-		this,
+		GetOwner(),
 		TossVelocity,
 		StartLocation,
 		OutHitRayVectorLocation, // RayCast hit Location
@@ -52,7 +53,10 @@ void UTankAimingComponent::AimAtTank(FVector OutHitRayVectorLocation, float Laun
 		false,
 		0.f,
 		0,
-		ESuggestProjVelocityTraceOption::DoNotTrace
+		ESuggestProjVelocityTraceOption::DoNotTrace,
+		CollisionResponse,
+		Temp,
+		false
 	);
 
 	if (bHaveAimingSoution)

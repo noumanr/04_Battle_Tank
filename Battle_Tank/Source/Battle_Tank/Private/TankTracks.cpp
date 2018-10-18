@@ -8,10 +8,9 @@
 void UTankTracks::SetThrottleRequest(float Throttle)
 {
 
-	auto Name = GetName();
-	UE_LOG(LogTemp, Warning, TEXT(" %s is throtling : %f "), *Name, Throttle)
 
-		auto ForceForward = GetForwardVector()*Throttle*MaxTrackThrottle;
+
+	auto ForceForward = GetForwardVector()*Throttle*MaxTrackThrottle;
 	auto ForceLocation = GetComponentLocation();
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 
