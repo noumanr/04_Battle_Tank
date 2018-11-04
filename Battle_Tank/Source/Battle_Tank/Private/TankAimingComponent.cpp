@@ -52,11 +52,11 @@ void UTankAimingComponent::AimAtTank(FVector OutHitRayVectorLocation, float Laun
 		LaunchSpeed, //derived from the blueprint
 		false,
 		0.f,
-		0,
-		ESuggestProjVelocityTraceOption::DoNotTrace,
-		CollisionResponse,
-		Temp,
-		false
+		0
+	//	ESuggestProjVelocityTraceOption::DoNotTrace,
+	//	CollisionResponse,
+//		Temp,
+	//	true
 	);
 
 	if (bHaveAimingSoution)

@@ -36,7 +36,6 @@ void UTankMovementComponent::IntendTurn(float Force)
 }
 void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
 {
-	//if (!LeftTrack || !RightTrack) { return; }
 	auto AITankForwardVector = MoveVelocity.GetSafeNormal();
 	auto TankForwardDirection = GetOwner()->GetActorForwardVector();
 

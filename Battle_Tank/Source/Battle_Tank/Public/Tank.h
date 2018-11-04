@@ -22,7 +22,7 @@ public:
 	// Sets default values for this pawn's properties
 	ATank();
 	void AimAtTank(FVector HitLocation);
-	UTankAimingComponent* TankAimingComponent = nullptr;
+
 	UTankBarrel* Barrel = nullptr;
 	UStaticMeshComponent* Body;
 
@@ -39,13 +39,13 @@ public:
 
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
+	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = Fire)
-		float LaunchSpeed = 10000; // TODO find sensible speed
+	float LaunchSpeed = 10000; // TODO find sensible speed
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBluePrint = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = Fire)
